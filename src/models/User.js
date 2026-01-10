@@ -1,0 +1,26 @@
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/database');
+
+const User = sequelize.define('User', {
+    username: {
+        type: DataTypes.STRING,
+        unique: true,
+        allowNull: false
+    },
+    password: {
+        type: DataTypes.STRING, // Akan menyimpan hash, bukan password asli
+        allowNull: false
+    },
+    role: {
+        type: DataTypes.ENUM('admin', 'dokter', 'apoteker', 'kasir'),
+        defaultValue: 'dokter'
+    },
+    full_name: {
+        type: DataTypes.STRING
+    }
+}, {
+    tableName: 'users',
+    timestamps: true
+});
+
+module.exports = User;
