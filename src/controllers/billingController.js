@@ -4,9 +4,6 @@ const { Billing, Registration, Patient, Doctor } = require('../models/associatio
 exports.generateBill = async (req, res) => {
     try {
         const { registration_id, medicine_cost } = req.body;
-        // medicine_cost diinput manual oleh kasir berdasarkan info dari apotek
-        // atau bisa diambil otomatis jika kita menyimpan total di tabel pharmacy
-
         const DOCTOR_FEE = 50000;
         const ADMIN_FEE = 5000;
 
@@ -53,7 +50,7 @@ exports.payBill = async (req, res) => {
 
         const bill = await Billing.findOne({ 
             where: { invoice_number },
-            include: [{ model: Registration }] // Supaya bisa update status registrasi juga
+            include: [{ model: Registration }]
         });
 
         if (!bill) return res.status(404).json({ message: 'Invoice tidak ditemukan' });
@@ -62,10 +59,6 @@ exports.payBill = async (req, res) => {
         bill.payment_status = 'paid';
         bill.payment_method = payment_method;
         await bill.save();
-
-        // Opsional: Update status di Registration jadi 'done' (benar-benar selesai)
-        // bill.Registration.status = 'done'; // Jika ingin mengubah status registrasi
-        // await bill.Registration.save();
 
         res.json({ message: 'Pembayaran Berhasil! Transaksi Selesai.', data: bill });
 

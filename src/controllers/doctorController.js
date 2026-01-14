@@ -5,7 +5,6 @@ exports.getMyQueue = async (req, res) => {
     try {
         const queue = await Registration.findAll({
             where: { 
-                // Di real project, cari doctor_id berdasarkan req.user.id dulu
                 status: ['queued', 'processing'] 
             },
             include: [{ model: Patient, attributes: ['full_name', 'medical_record_number'] }],

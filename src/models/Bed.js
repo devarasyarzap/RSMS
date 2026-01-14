@@ -3,7 +3,7 @@ const sequelize = require('../config/database');
 
 const Bed = sequelize.define('Bed', {
     bed_number: {
-        type: DataTypes.STRING, // "A-101"
+        type: DataTypes.STRING, 
         allowNull: false
     },
     status: {

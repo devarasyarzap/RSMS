@@ -11,11 +11,11 @@ const Medicine = sequelize.define('Medicine', {
         defaultValue: 0
     },
     price: {
-        type: DataTypes.INTEGER, // Harga per unit
+        type: DataTypes.INTEGER, 
         defaultValue: 0
     },
     unit: {
-        type: DataTypes.STRING // Contoh: "Tablet", "Botol", "Strip"
+        type: DataTypes.STRING 
     }
 }, { timestamps: true });
 

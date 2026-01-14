@@ -4,7 +4,7 @@ const sequelize = require('../config/database');
 const Billing = sequelize.define('Billing', {
     invoice_number: {
         type: DataTypes.STRING,
-        unique: true // Contoh: INV-20231027-001
+        unique: true 
     },
     total_amount: {
         type: DataTypes.INTEGER,
@@ -15,7 +15,7 @@ const Billing = sequelize.define('Billing', {
         defaultValue: 'pending'
     },
     payment_method: {
-        type: DataTypes.STRING, // Cash, Transfer, BPJS, dll
+        type: DataTypes.STRING,
         allowNull: true
     }
 }, { timestamps: true });

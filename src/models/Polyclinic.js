@@ -7,7 +7,7 @@ const Polyclinic = sequelize.define('Polyclinic', {
         allowNull: false
     },
     location: {
-        type: DataTypes.STRING // Misal: "Lantai 2, Gedung A"
+        type: DataTypes.STRING 
     }
 }, { timestamps: false });
 

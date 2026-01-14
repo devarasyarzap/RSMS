@@ -4,18 +4,18 @@ const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-// 1. Register User Baru (Biasanya hanya bisa dilakukan oleh Admin)
+// 1. Register User Baru 
 exports.register = async (req, res) => {
     try {
         const { username, password, role, full_name } = req.body;
 
-        // Cek apakah username sudah ada
+        // Cek username
         const existingUser = await User.findOne({ where: { username } });
         if (existingUser) {
             return res.status(400).json({ message: 'Username sudah digunakan' });
         }
 
-        // Enkripsi Password (Hashing)
+        // Enkripsi Password
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 

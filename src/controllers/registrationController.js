@@ -9,8 +9,6 @@ exports.registerVisit = async (req, res) => {
         if (!doctor) return res.status(404).json({ message: 'Dokter tidak ditemukan' });
 
         // 2. Hitung Nomor Antrean untuk Dokter tersebut HARI INI
-        // (Logic sederhana: hitung jumlah pasien hari ini + 1)
-        // Di production, logic ini harus lebih spesifik per tanggal
         const countToday = await Registration.count({ where: { doctor_id } });
         const newQueueNumber = countToday + 1;
 
@@ -22,7 +20,7 @@ exports.registerVisit = async (req, res) => {
             registration_number: regNumber,
             patient_id,
             doctor_id,
-            polyclinic_id: doctor.polyclinic_id, // Otomatis ikut poli si dokter
+            polyclinic_id: doctor.polyclinic_id, 
             complaint,
             queue_number: newQueueNumber,
             status: 'queued'
@@ -32,7 +30,7 @@ exports.registerVisit = async (req, res) => {
             message: 'Pendaftaran Berhasil',
             data: {
                 registration_number: regNumber,
-                queue_number: newQueueNumber, // Tampilkan ke Pasien
+                queue_number: newQueueNumber, 
                 doctor_id: doctor_id
             }
         });

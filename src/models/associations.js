@@ -10,16 +10,12 @@ const Bed = require('./Bed');
 const InpatientAdmission = require('./InpatientAdmission');
 const Medicine = require('./Medicine');
 
-// 1. Relasi User -> Doctor (One-to-One)
 User.hasOne(Doctor, { foreignKey: 'user_id' });
 Doctor.belongsTo(User, { foreignKey: 'user_id' });
 
-// 2. Relasi Polyclinic -> Doctor (One-to-Many)
-// Satu poli punya banyak dokter
 Polyclinic.hasMany(Doctor, { foreignKey: 'polyclinic_id' });
 Doctor.belongsTo(Polyclinic, { foreignKey: 'polyclinic_id' });
 
-// 3. Relasi Registration (The Big One)
 Patient.hasMany(Registration, { foreignKey: 'patient_id' });
 Registration.belongsTo(Patient, { foreignKey: 'patient_id' });
 

@@ -23,11 +23,9 @@ exports.getAllMedicines = async (req, res) => {
 };
 
 // 3. Proses Resep (Mengurangi Stok)
-// Apoteker melihat resep dokter, lalu menginput obat apa saja yang diberikan
 exports.dispenseMedicine = async (req, res) => {
     try {
         const { registration_id, medicines } = req.body; 
-        // medicines format: [{ "medicine_id": 1, "quantity": 10 }, ...]
 
         // Cek Registrasi
         const reg = await Registration.findByPk(registration_id);
@@ -54,9 +52,6 @@ exports.dispenseMedicine = async (req, res) => {
             // Hitung harga (untuk keperluan kasir nanti)
             totalCost += med.price * item.quantity;
         }
-
-        // Update status registrasi (Opsional: bisa tambah status 'meds_dispensed')
-        // Disini kita biarkan saja, atau simpan total tagihan jika ada tabel billing
 
         res.json({ 
             message: 'Obat berhasil dikeluarkan & Stok berkurang',

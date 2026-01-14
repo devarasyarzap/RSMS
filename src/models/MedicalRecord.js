@@ -7,13 +7,13 @@ const MedicalRecord = sequelize.define('MedicalRecord', {
         allowNull: false
     },
     symptoms: {
-        type: DataTypes.TEXT // Gejala yang dirasakan
+        type: DataTypes.TEXT 
     },
     notes: {
-        type: DataTypes.TEXT // Catatan tambahan dokter
+        type: DataTypes.TEXT 
     },
     prescription: {
-        type: DataTypes.TEXT // Resep obat (nanti bisa kita upgrade jadi tabel terpisah)
+        type: DataTypes.TEXT 
     }
 }, { timestamps: true });
 

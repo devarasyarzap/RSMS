@@ -3,11 +3,11 @@ const sequelize = require('../config/database');
 
 const WardClass = sequelize.define('WardClass', {
     class_name: {
-        type: DataTypes.STRING, // Contoh: "VIP", "Kelas 1", "ICU"
+        type: DataTypes.STRING, 
         allowNull: false
     },
     price_per_day: {
-        type: DataTypes.INTEGER, // Contoh: 500000
+        type: DataTypes.INTEGER, 
         allowNull: false
     }
 }, { timestamps: false });

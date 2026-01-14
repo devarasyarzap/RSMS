@@ -29,8 +29,8 @@ const Patient = sequelize.define('Patient', {
         type: DataTypes.STRING
     }
 }, {
-    tableName: 'patients', // Nama tabel di Postgres
-    timestamps: true       // Otomatis buat created_at & updated_at
+    tableName: 'patients', 
+    timestamps: true       
 });
 
 module.exports = Patient;

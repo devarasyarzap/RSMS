@@ -8,7 +8,7 @@ const User = sequelize.define('User', {
         allowNull: false
     },
     password: {
-        type: DataTypes.STRING, // Akan menyimpan hash, bukan password asli
+        type: DataTypes.STRING, 
         allowNull: false
     },
     role: {

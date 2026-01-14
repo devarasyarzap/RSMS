@@ -7,7 +7,7 @@ const Doctor = sequelize.define('Doctor', {
         unique: true
     },
     specialization: {
-        type: DataTypes.STRING // Misal: "Spesialis Bedah"
+        type: DataTypes.STRING 
     },
     is_available: {
         type: DataTypes.BOOLEAN,

@@ -16,8 +16,6 @@ exports.createPatient = async (req, res) => {
         // Ambil data dari input user (body)
         const { nik, full_name, birth_date, gender, address, phone_number } = req.body;
 
-        // Generate No RM Sederhana (Contoh: 202310-001)
-        // Di production, logic ini harus lebih canggih agar tidak duplikat
         const count = await Patient.count();
         const rmNumber = `RM-${new Date().getFullYear()}-${(count + 1).toString().padStart(4, '0')}`;
 
