@@ -5,6 +5,8 @@ const patientController = require('../controllers/patientController');
 
 router.get('/data', patientController.getAllPatients);
 
-router.post('/create', patientController.createPatient);
+router.post('/create', patientController.createPatientOffline);
+
+router.get('/search', patientController.searchPatient);
 
 module.exports = router;

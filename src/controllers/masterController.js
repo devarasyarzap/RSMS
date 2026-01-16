@@ -1,4 +1,5 @@
 const { Polyclinic, Doctor, User, WardClass, Bed  } = require('../models/associations');
+
 // 1. Tambah Poliklinik Baru
 exports.createPolyclinic = async (req, res) => {
     try {
@@ -10,7 +11,48 @@ exports.createPolyclinic = async (req, res) => {
     }
 };
 
-// 2. Tambah Profil Dokter (Menghubungkan User -> Poli)
+// 2. Ambil Semua Poli (Untuk Dropdown Pendaftaran)
+exports.getAllPolyclinics = async (req, res) => {
+    try {
+        const polyclinics = await Polyclinic.findAll({
+            attributes: ['id', 'name', 'location'] 
+        });
+        
+        res.json({
+            status: 'success',
+            data: polyclinics
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// 3. Ambil Detail Poli (Beserta Siapa Dokternya)
+exports.getPolyclinicDetail = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const poly = await Polyclinic.findByPk(id, {
+            include: [{
+                model: Doctor,
+                attributes: ['id', 'name', 'specialization', 'schedule'] // Tampilkan dokter di poli ini
+            }]
+        });
+
+        if (!poly) {
+            return res.status(404).json({ message: 'Poliklinik tidak ditemukan' });
+        }
+
+        res.json({
+            status: 'success',
+            data: poly
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// 4. Tambah Profil Dokter (Menghubungkan User -> Poli)
 exports.createDoctorProfile = async (req, res) => {
     try {
         const { user_id, polyclinic_id, sip_number, specialization } = req.body;
@@ -33,6 +75,57 @@ exports.createDoctorProfile = async (req, res) => {
     }
 };
 
+// 5. Ambil Semua Dokter (Beserta Nama Polinya)
+exports.getAllDoctors = async (req, res) => {
+    try {
+        const doctors = await Doctor.findAll({
+            include: [
+                {
+                    model: Polyclinic,
+                    attributes: ['name'] 
+                }
+            ],
+            attributes: ['id', 'name', 'specialization', 'phone', 'schedule'] // Pilih field yg mau ditampilkan
+        });
+
+        // Format ulang data sedikit agar lebih rapi
+        const formattedData = doctors.map(doc => ({
+            id: doc.id,
+            name: doc.name,
+            specialization: doc.specialization, // Spesialisasi spesifik
+            polyclinic: doc.Polyclinic ? doc.Polyclinic.name : 'Tidak Ada Poli',
+            phone: doc.phone,
+            schedule: doc.schedule
+        }));
+
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+
+exports.getDoctorById = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const doctor = await Doctor.findByPk(id, {
+            include: [{ model: Polyclinic, attributes: ['name'] }]
+        });
+
+        if (!doctor) {
+            return res.status(404).json({ message: 'Dokter tidak ditemukan' });
+        }
+
+        res.json({
+            status: 'success',
+            data: doctor
+        });
+
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// 6. buat kelas kamar
 exports.createWardClass = async (req, res) => {
     try {
         const { class_name, price_per_day } = req.body;
@@ -51,7 +144,7 @@ exports.createWardClass = async (req, res) => {
     }
 };
 
-// 2. Tambah Bed / Kasur
+// 7. Tambah Bed / Kasur
 exports.createBed = async (req, res) => {
     try {
         const { bed_number, ward_class_id } = req.body;
@@ -77,11 +170,11 @@ exports.createBed = async (req, res) => {
     }
 };
 
-// 3. Lihat Semua Bed (Opsional, untuk cek data)
+// 8. Lihat Semua Bed 
 exports.getAllBeds = async (req, res) => {
     try {
         const beds = await Bed.findAll({
-            include: [{ model: WardClass }] // Supaya terlihat ini bed kelas apa
+            include: [{ model: WardClass }]
         });
         res.json(beds);
     } catch (error) {
