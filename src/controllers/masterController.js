@@ -1,5 +1,4 @@
-const { Polyclinic, Doctor, User } = require('../models/associations');
-const { WardClass, Bed } = require('../models/associations');
+const { Polyclinic, Doctor, User, WardClass, Bed  } = require('../models/associations');
 // 1. Tambah Poliklinik Baru
 exports.createPolyclinic = async (req, res) => {
     try {
