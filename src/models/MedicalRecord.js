@@ -13,8 +13,13 @@ const MedicalRecord = sequelize.define('MedicalRecord', {
         type: DataTypes.TEXT 
     },
     prescription: {
-        type: DataTypes.TEXT 
-    }
+        type: DataTypes.TEXT ,
+        allowNull: true
+    },
+    pharmacy_status: {
+        type: DataTypes.ENUM('pending', 'completed'),
+        defaultValue: 'pending'
+    },    
 }, { timestamps: true });
 
 module.exports = MedicalRecord;

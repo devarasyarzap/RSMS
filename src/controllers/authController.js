@@ -56,9 +56,9 @@ exports.login = async (req, res) => {
         console.log("SECRET KEY SAYA:", process.env.JWT_SECRET);
         // Buat Token JWT
         const token = jwt.sign(
-            { id: user.id, role: user.role }, // Payload (data dalam token)
-            process.env.JWT_SECRET,           // Secret Key
-            { expiresIn: process.env.JWT_EXPIRES_IN } // Waktu kadaluwarsa
+            { id: user.id, role: user.role },
+            process.env.JWT_SECRET,           
+            { expiresIn: process.env.JWT_EXPIRES_IN } 
         );
 
         res.json({
@@ -90,12 +90,12 @@ exports.registerPatientSelf = async (req, res) => {
         const newUser = await User.create({
             email,
             password: hashedPassword,
-            role: 'patient' // PENTING: Role khusus pasien
+            role: 'pasien' 
         });
 
         // 3. Buat Data Medis (Patient) yg terhubung ke User tadi
         const newPatient = await Patient.create({
-            user_id: newUser.id, // Kuncinya di sini
+            user_id: newUser.id,
             name,
             nik,
             phone,
