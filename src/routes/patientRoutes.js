@@ -3,8 +3,8 @@ const router = express.Router();
 const patientController = require('../controllers/patientController');
 
 
-router.get('/', patientController.getAllPatients);
+router.get('/data', patientController.getAllPatients);
 
-router.post('/', patientController.createPatient);
+router.post('/create', patientController.createPatient);
 
 module.exports = router;
