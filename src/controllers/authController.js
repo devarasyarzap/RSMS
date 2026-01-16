@@ -1,6 +1,6 @@
 require('dotenv').config();
 
-const User = require('../models/User');
+const { User, Patient } = require('../models/associations');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
@@ -68,6 +68,47 @@ exports.login = async (req, res) => {
                 id: user.id,
                 username: user.username,
                 role: user.role
+            }
+        });
+
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// 3. pendafatran mandiri
+exports.registerPatientSelf = async (req, res) => {
+    try {
+        const { email, password, name, nik, phone, address, gender, dob } = req.body;
+
+        // 1. Cek apakah email sudah ada?
+        const existingUser = await User.findOne({ where: { email } });
+        if (existingUser) return res.status(400).json({ message: 'Email sudah terdaftar' });
+
+        // 2. Buat Akun Login (User)
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const newUser = await User.create({
+            email,
+            password: hashedPassword,
+            role: 'patient' // PENTING: Role khusus pasien
+        });
+
+        // 3. Buat Data Medis (Patient) yg terhubung ke User tadi
+        const newPatient = await Patient.create({
+            user_id: newUser.id, // Kuncinya di sini
+            name,
+            nik,
+            phone,
+            address,
+            gender,
+            date_of_birth: dob
+        });
+
+        res.status(201).json({ 
+            message: 'Registrasi Berhasil! Silakan Login.',
+            data: {
+                user_id: newUser.id,
+                patient_name: newPatient.name
             }
         });
 

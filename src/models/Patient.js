@@ -1,36 +1,39 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
+const sequelize = require('../config/database'); // Sesuaikan path config Anda
 
 const Patient = sequelize.define('Patient', {
-    medical_record_number: {
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+    },
+    user_id: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        unique: true
+    },
+    name: {
         type: DataTypes.STRING,
-        unique: true,
         allowNull: false
     },
     nik: {
         type: DataTypes.STRING,
         unique: true
     },
-    full_name: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    birth_date: {
-        type: DataTypes.DATEONLY,
-        allowNull: false
-    },
-    gender: {
-        type: DataTypes.ENUM('M', 'F')
+    phone: {
+        type: DataTypes.STRING
     },
     address: {
         type: DataTypes.TEXT
     },
-    phone_number: {
-        type: DataTypes.STRING
+    gender: {
+        type: DataTypes.ENUM('L', 'P')
+    },
+    date_of_birth: {
+        type: DataTypes.DATEONLY
     }
-}, {
-    tableName: 'patients', 
-    timestamps: true       
+}, { 
+    timestamps: true 
 });
 
 module.exports = Patient;

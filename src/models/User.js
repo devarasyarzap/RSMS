@@ -7,19 +7,29 @@ const User = sequelize.define('User', {
         unique: true,
         allowNull: false
     },
+
+    email: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+        validate: {
+            isEmail: true
+        }
+    },
+
     password: {
         type: DataTypes.STRING, 
         allowNull: false
     },
     role: {
-        type: DataTypes.ENUM('admin', 'dokter', 'apoteker', 'kasir'),
-        defaultValue: 'dokter'
+        type: DataTypes.ENUM('admin', 'dokter', 'apoteker', 'kasir', 'pasien'),
+        defaultValue: 'pasien'
     },
     full_name: {
         type: DataTypes.STRING
     }
-}, {
-    tableName: 'users',
+}, 
+{
     timestamps: true
 });
 
