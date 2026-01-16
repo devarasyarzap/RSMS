@@ -58,3 +58,41 @@ exports.getAllRegistrations = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+// boooling antrean (tanpa input ID pasien)
+
+exports.createSelfRegistration = async (req, res) => {
+    try {
+        const { doctor_id } = req.body;
+        const userId = req.user.id; // Didapat dari Token (AuthMiddleware)
+
+        // 1. Cari Data Pasien berdasarkan User ID yang login
+        const patient = await Patient.findOne({ where: { user_id: userId } });
+        
+        if (!patient) {
+            return res.status(404).json({ message: 'Data pasien tidak ditemukan untuk akun ini.' });
+        }
+
+        // 2. Generate Nomor Antrean (Copy logika dari createRegistration sebelumnya)
+        // ... (Logika generate nomor antrean Anda, singkatnya seperti ini:)
+        const regNumber = `REG-${Date.now()}`; 
+
+        // 3. Buat Registrasi
+        const newReg = await Registration.create({
+            patient_id: patient.id, // Otomatis terisi
+            doctor_id,
+            polyclinic_id: 1, // Atau ambil dari input body jika perlu
+            registration_date: new Date(),
+            queue_number: 99, // Logic antrean bisa diperbaiki nanti
+            status: 'queued'
+        });
+
+        res.status(201).json({ 
+            message: 'Berhasil mendaftar antrean!',
+            data: newReg 
+        });
+
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};

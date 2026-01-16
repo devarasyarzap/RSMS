@@ -33,12 +33,10 @@ app.use('/api/billing', authMiddleware, billingRoutes);
 
 const PORT = process.env.PORT || 3000;
 
-
-sequelize.sync({ alter: true }) 
-    .then(() => {
-        console.log('Database & Tables Synced Successfully!');
-        app.listen(PORT, () => {
-            console.log(`Server running on port ${PORT}`);
-        });
-    })
-    .catch(err => console.log('Error Database:', err));
+sequelize.sync({ alter: true }).then(() => { 
+    app.listen(PORT, () => {
+        console.log(`Server running on port ${PORT}`);
+    });
+}).catch(err => {
+    console.error('Gagal koneksi database:', err);
+});

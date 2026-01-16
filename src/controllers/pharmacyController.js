@@ -1,5 +1,4 @@
-const Medicine = require('../models/Medicine');
-const { Registration, Patient, MedicalRecord } = require('../models/associations');
+const { MedicalRecord, Registration, Patient, User, Doctor, Medicine } = require('../models/associations');
 
 // 1. Tambah Obat Baru (Inventory)
 exports.addMedicine = async (req, res) => {
@@ -22,40 +21,73 @@ exports.getAllMedicines = async (req, res) => {
     }
 };
 
-// 3. Proses Resep (Mengurangi Stok)
+// 3. ambil resep dokter
+exports.getPrescriptionQueue = async (req, res) => {
+    try {
+        // Cari rekam medis yang status farmasinya masih 'pending'
+        const queue = await MedicalRecord.findAll({
+            where: { pharmacy_status: 'pending' },
+            include: [
+                {
+                    model: Registration,
+                    include: [
+                        { model: Patient, attributes: ['name'] },
+                        { model: Doctor, attributes: ['name'] }  
+                    ]
+                }
+            ]
+        });
+
+        // Format data agar mudah dibaca
+        const formattedData = queue.map(item => ({
+            medical_record_id: item.id,
+            patient_name: item.Registration.Patient ? item.Registration.Patient.name : 'Tanpa Nama',
+            doctor_name: item.Registration.Doctor ? item.Registration.Doctor.name : 'Tanpa Nama',
+            diagnosis: item.diagnosis,
+            prescription_text: item.prescription, // Resep dari dokter
+            date: item.createdAt
+        }));
+
+        res.json({
+            message: 'Daftar Antrean Resep',
+            data: formattedData
+        });
+
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// 3. PROSES PENGAMBILAN OBAT (Dispense)
 exports.dispenseMedicine = async (req, res) => {
     try {
-        const { registration_id, medicines } = req.body; 
+        const { medical_record_id, medicine_id, quantity } = req.body;
 
-        // Cek Registrasi
-        const reg = await Registration.findByPk(registration_id);
-        if (!reg) return res.status(404).json({ message: 'Registrasi tidak ditemukan' });
-
-        let totalCost = 0;
-
-        // Loop setiap obat yang akan dikeluarkan
-        for (const item of medicines) {
-            const med = await Medicine.findByPk(item.medicine_id);
-            
-            if (!med) {
-                return res.status(404).json({ message: `Obat ID ${item.medicine_id} tidak ditemukan` });
-            }
-
-            if (med.stock < item.quantity) {
-                return res.status(400).json({ message: `Stok ${med.name} tidak cukup!` });
-            }
-
-            // Kurangi Stok
-            med.stock = med.stock - item.quantity;
-            await med.save();
-
-            // Hitung harga (untuk keperluan kasir nanti)
-            totalCost += med.price * item.quantity;
+        // A. Cek Stok Obat
+        const medicine = await Medicine.findByPk(medicine_id);
+        if (!medicine) return res.status(404).json({ message: 'Obat tidak ditemukan' });
+        
+        // Pastikan quantity valid
+        if (medicine.stock < quantity) {
+            return res.status(400).json({ 
+                message: `Stok tidak cukup. Sisa: ${medicine.stock}, Diminta: ${quantity}` 
+            });
         }
 
-        res.json({ 
-            message: 'Obat berhasil dikeluarkan & Stok berkurang',
-            total_price: totalCost 
+        // B. Kurangi Stok
+        await medicine.update({ stock: medicine.stock - quantity });
+
+        // C. Update Status Resep jadi 'completed' (Selesai)
+        // Cek dulu apakah medical_record_id ada
+        const record = await MedicalRecord.findByPk(medical_record_id);
+        if (record) {
+            await record.update({ pharmacy_status: 'completed' });
+        }
+
+        res.json({
+            message: 'Obat berhasil diserahkan & Stok berkurang',
+            sisa_stok: medicine.stock,
+            harga_total: medicine.price * quantity
         });
 
     } catch (error) {

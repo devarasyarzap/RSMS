@@ -32,7 +32,8 @@ exports.submitExamination = async (req, res) => {
             diagnosis,
             symptoms,
             notes,
-            prescription
+            prescription,
+            pharmacy_status: 'pending'
         });
 
         // Update Status Antrean jadi 'completed'
@@ -40,7 +41,7 @@ exports.submitExamination = async (req, res) => {
         await reg.save();
 
         res.status(201).json({ 
-            message: 'Pemeriksaan Selesai', 
+            message: 'Pemeriksaan Selesai. Resep dikirim ke Apotek', 
             data: record 
         });
 
