@@ -1,4 +1,6 @@
+const { Op } = require('sequelize');
 const { Patient, User } = require('../models/associations'); 
+
 // 1. Ambil Semua Data Pasien (Untuk Admin/Staff)
 exports.getAllPatients = async (req, res) => {
     try {
@@ -56,9 +58,28 @@ exports.createPatientOffline = async (req, res) => {
 // 3. Cari Pasien (Penting untuk Pendaftaran)
 exports.searchPatient = async (req, res) => {
     try {
-        const { keyword } = req.query; // ?keyword=Budi
-        // Logic pencarian bisa ditambahkan nanti menggunakan Op.like
-        res.json({ message: "Fitur search akan ditaruh di sini" });
+        const { keyword } = req.query;
+
+        // Jika tidak ada keyword, kembalikan error atau array kosong
+        if (!keyword) {
+            return res.status(400).json({ message: "Mohon masukkan keyword pencarian" });
+        }
+
+        const patients = await Patient.findAll({
+            where: {
+                // Mencari kemiripan (LIKE) di Nama ATAU NIK
+                [Op.or]: [
+                    { name: { [Op.iLike]: `%${keyword}%` } }, // iLike = Case Insensitive (Postgres)
+                    { nik: { [Op.like]: `%${keyword}%` } }
+                ]
+            }
+        });
+
+        res.json({
+            status: 'success',
+            count: patients.length,
+            data: patients
+        });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
