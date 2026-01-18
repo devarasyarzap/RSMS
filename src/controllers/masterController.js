@@ -17,6 +17,15 @@ exports.getAllUsers = async (req, res) => {
   }
 };
 
+exports.getWards = async (req, res) => {
+  try {
+    const wards = await WardClass.findAll();
+    res.status(200).json({ status: "success", data: wards });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // 1. Tambah Poliklinik Baru
 exports.createPolyclinic = async (req, res) => {
   try {
