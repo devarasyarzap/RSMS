@@ -78,8 +78,17 @@ exports.login = async (req, res) => {
 // 3. pendafatran mandiri
 exports.registerPatientSelf = async (req, res) => {
   try {
-    const { email, password, name, nik, phone, address, gender, dob } =
-      req.body;
+    const {
+      email,
+      password,
+      name,
+      nik,
+      phone,
+      address,
+      gender,
+      dob,
+      username,
+    } = req.body;
 
     // 1. Cek apakah email sudah ada?
     const existingUser = await User.findOne({ where: { email } });
@@ -92,6 +101,8 @@ exports.registerPatientSelf = async (req, res) => {
       email,
       password: hashedPassword,
       role: "pasien",
+      full_name: name,
+      username,
     });
 
     // 3. Buat Data Medis (Patient) yg terhubung ke User tadi
