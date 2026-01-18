@@ -7,7 +7,7 @@ const jwt = require('jsonwebtoken');
 // 1. Register User Baru 
 exports.register = async (req, res) => {
     try {
-        const { username, password, role, full_name } = req.body;
+        const { username, password, role, full_name,email } = req.body;
 
         // Cek username
         const existingUser = await User.findOne({ where: { username } });
