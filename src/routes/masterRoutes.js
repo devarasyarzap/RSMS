@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const masterController = require('../controllers/masterController');
 
+router.get('/users', masterController.getAllUsers);
+
 // POST /api/master/polys (Tambah Poli)
 router.post('/polys', masterController.createPolyclinic);
 
