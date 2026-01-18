@@ -24,7 +24,8 @@ exports.register = async (req, res) => {
             username,
             password: hashedPassword,
             role,
-            full_name
+            full_name,
+            email
         });
 
         res.status(201).json({ 
