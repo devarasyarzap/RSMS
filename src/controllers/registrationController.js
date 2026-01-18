@@ -66,11 +66,42 @@ exports.getAllRegistrations = async (req, res) => {
   }
 };
 
+exports.getSelfRegistrations = async (req, res) => {
+  try {
+    const userId = req.user.id; // Didapat dari Token (AuthMiddleware)
+
+    // 1. Cari Data Pasien berdasarkan User ID yang login
+    const patient = await Patient.findOne({ where: { user_id: userId } });
+
+    if (!patient) {
+      return res
+        .status(404)
+        .json({ message: "Data pasien tidak ditemukan untuk akun ini." });
+    }
+
+    const data = await Registration.findAll({
+      where: { patient_id: patient.id },
+      include: [
+        // JOIN TABLE
+        { model: Patient, attributes: ["name"] },
+        {
+          model: Doctor,
+          include: [{ model: User, attributes: ["full_name"] }], // Ambil nama dokter dari tabel User
+        },
+        { model: Polyclinic, attributes: ["name"] },
+      ],
+    });
+    res.json({ data });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // boooling antrean (tanpa input ID pasien)
 
 exports.createSelfRegistration = async (req, res) => {
   try {
-    const { doctor_id } = req.body;
+    const { doctor_id, complaint } = req.body;
     const userId = req.user.id; // Didapat dari Token (AuthMiddleware)
 
     // 1. Cari Data Pasien berdasarkan User ID yang login
@@ -85,6 +116,8 @@ exports.createSelfRegistration = async (req, res) => {
     // 2. Generate Nomor Antrean (Copy logika dari createRegistration sebelumnya)
     // ... (Logika generate nomor antrean Anda, singkatnya seperti ini:)
     const regNumber = `REG-${Date.now()}`;
+    const countToday = await Registration.count({ where: { doctor_id } });
+    const newQueueNumber = countToday + 1;
 
     // 3. Buat Registrasi
     const newReg = await Registration.create({
@@ -92,8 +125,10 @@ exports.createSelfRegistration = async (req, res) => {
       doctor_id,
       polyclinic_id: 1, // Atau ambil dari input body jika perlu
       registration_date: new Date(),
-      queue_number: 99, // Logic antrean bisa diperbaiki nanti
+      queue_number: newQueueNumber,
       status: "queued",
+      complaint,
+      registration_number: regNumber,
     });
 
     res.status(201).json({

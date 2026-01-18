@@ -22,6 +22,8 @@ router.get('/doctors', masterController.getAllDoctors);
 // GET /api/master/doctors:id (Lihat detail 1 dokter)
 router.get('/doctors:id', masterController.getDoctorById);
 
+router.get('/ward-classes', masterController.getWards);
+
 // POST /api/master/ward-classes (Tambah Kelas)
 router.post('/ward-classes', masterController.createWardClass);
 
