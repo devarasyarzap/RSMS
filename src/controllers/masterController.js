@@ -4,6 +4,7 @@ const {
   User,
   WardClass,
   Bed,
+  MedicalRecord,
 } = require("../models/associations");
 
 exports.getAllUsers = async (req, res) => {
@@ -12,6 +13,15 @@ exports.getAllUsers = async (req, res) => {
       order: [["createdAt", "DESC"]],
     });
     res.status(200).json({ status: "success", data: users });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.getAllMedical = async (req, res) => {
+  try {
+    const medical = await MedicalRecord.findAll();
+    res.status(200).json({ status: "success", data: medical });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
