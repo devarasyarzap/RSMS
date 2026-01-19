@@ -2,37 +2,50 @@ const express = require("express");
 const router = express.Router();
 const masterController = require("../controllers/masterController");
 
-router.get("/users", masterController.getAllUsers);
+// ==========================================
+// 1. MANAJEMEN USER & STAFF (Admin, Kasir, Apoteker)
+// ==========================================
+// Lihat semua user
+router.get('/users', masterController.getAllUsers);
+// Edit User (Aktif/Nonaktif, Ganti Nama)
+router.put('/users/:id', masterController.updateUser); 
+
+// Khusus Staff (Kasir & Apoteker)
+router.post('/staff', masterController.createStaffUser); // Buat Staff Baru
+router.get('/cashiers', masterController.getAllCashiers); // Lihat Kasir
+router.get('/pharmacists', masterController.getAllPharmacists); // Lihat Apoteker
+
+// ==========================================
+// 2. MANAJEMEN POLIKLINIK
+// ==========================================
+router.post('/polys', masterController.createPolyclinic);
+router.get('/polys', masterController.getAllPolyclinics);
+// PERBAIKAN: Tambahkan '/' sebelum ':id'
+router.get('/polys/:id', masterController.getPolyclinicDetail);
+router.put('/polys/:id', masterController.updatePolyclinic); // Edit Poli
+
+// ==========================================
+// 3. MANAJEMEN DOKTER
+// ==========================================
+router.post('/doctors', masterController.createDoctorProfile);
+router.get('/doctors', masterController.getAllDoctors);
+// PERBAIKAN: Tambahkan '/' sebelum ':id'
+router.get('/doctors/:id', masterController.getDoctorById); 
+router.put('/doctors/:id', masterController.updateDoctor); // Edit Dokter
+
+// ==========================================
+// 4. MANAJEMEN KAMAR & KASUR (Rawat Inap)
+// ==========================================
+// Kelas Kamar (Ward Class)
+router.get('/ward-classes', masterController.getWards);
+router.post('/ward-classes', masterController.createWardClass);
+router.put('/ward-classes/:id', masterController.updateWardClass); // Edit Kelas
+
+// Kasur (Bed)
+router.post('/beds', masterController.createBed);
+router.get('/beds', masterController.getAllBeds);
+router.put('/beds/:id', masterController.updateBed); // Edit Kasur
 
 router.get("/medical-records", masterController.getAllMedical);
-
-// POST /api/master/polys (Tambah Poli)
-router.post("/polys", masterController.createPolyclinic);
-
-// GET /api/master/polys  (Ambil Semua)
-router.get("/polys", masterController.getAllPolyclinics);
-
-// GET /api/master/polys:id (Ambil Satu + Dokter)
-router.get("/polys:id", masterController.getPolyclinicDetail);
-
-// POST /api/master/doctors (Tambah Dokter)
-router.post("/doctors", masterController.createDoctorProfile);
-
-// GET /api/master/doctors (Lihat semua dokter)
-router.get("/doctors", masterController.getAllDoctors);
-
-// GET /api/master/doctors:id (Lihat detail 1 dokter)
-router.get("/doctors:id", masterController.getDoctorById);
-
-router.get("/ward-classes", masterController.getWards);
-
-// POST /api/master/ward-classes (Tambah Kelas)
-router.post("/ward-classes", masterController.createWardClass);
-
-// POST /api/master/beds (Tambah Kasur)
-router.post("/beds", masterController.createBed);
-
-// GET /api/master/beds (Lihat Daftar Kasur)
-router.get("/beds", masterController.getAllBeds);
 
 module.exports = router;
