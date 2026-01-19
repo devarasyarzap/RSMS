@@ -1,6 +1,6 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const masterController = require('../controllers/masterController');
+const masterController = require("../controllers/masterController");
 
 // ==========================================
 // 1. MANAJEMEN USER & STAFF (Admin, Kasir, Apoteker)
@@ -45,5 +45,7 @@ router.put('/ward-classes/:id', masterController.updateWardClass); // Edit Kelas
 router.post('/beds', masterController.createBed);
 router.get('/beds', masterController.getAllBeds);
 router.put('/beds/:id', masterController.updateBed); // Edit Kasur
+
+router.get("/medical-records", masterController.getAllMedical);
 
 module.exports = router;
