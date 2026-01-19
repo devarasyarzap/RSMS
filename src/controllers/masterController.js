@@ -5,6 +5,8 @@ const {
   WardClass,
   Bed,
   MedicalRecord,
+  Registration,
+  Patient,
 } = require("../models/associations");
 
 exports.getAllUsers = async (req, res) => {
@@ -20,7 +22,18 @@ exports.getAllUsers = async (req, res) => {
 
 exports.getAllMedical = async (req, res) => {
   try {
-    const medical = await MedicalRecord.findAll();
+    const medical = await MedicalRecord.findAll({
+      include: [
+        {
+          model: Registration,
+          include: [
+            { model: Patient },
+            { model: Doctor, include: [User] },
+            { model: Polyclinic },
+          ],
+        },
+      ],
+    });
     res.status(200).json({ status: "success", data: medical });
   } catch (error) {
     res.status(500).json({ message: error.message });
